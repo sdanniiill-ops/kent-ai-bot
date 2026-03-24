@@ -3,8 +3,8 @@ import telebot
 import requests
 from telebot.types import *
 
-TOKEN = "PASTE_BOT_TOKEN"
-DOMAIN = "https://YOUR_DOMAIN"
+TOKEN = "8390334757:AAGZ0iTQMW90-eZLvsQsYheB_mtEoimeq3w"
+DOMAIN = "https://kent-ai-bot.onrender.com"
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -14,7 +14,7 @@ def start(message):
 
     markup.add(InlineKeyboardButton(
         "🚀 Регистрация",
-        url=f"https://partners.pocketoption.com/?subid={message.chat.id}"
+        url=f"https://u3.shortink.io/register?utm_campaign=840644&utm_source=affiliate&utm_medium=sr&a=gaQWS5fftwSPOE&ac=89kent&code=WELCOME50{message.chat.id}"
     ))
 
     markup.add(InlineKeyboardButton(
