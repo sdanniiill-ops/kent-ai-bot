@@ -14,7 +14,7 @@ def start(message):
 
     markup.add(InlineKeyboardButton(
         "🚀 Регистрация",
-        url=f"https://u3.shortink.io/register?utm_campaign=840644&utm_source=affiliate&utm_medium=sr&a=gaQWS5fftwSPOE&ac=89kent&code=WELCOME50{message.chat.id}"
+        url=f"https://u3.shortink.io/register?utm_campaign=840644&utm_source=affiliate&utm_medium=sr&a=gaQWS5fftwSPOE&ac=89kent&code=WELCOME50&subid={message.chat.id}"
     ))
 
     markup.add(InlineKeyboardButton(
