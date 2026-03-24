@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import json
 import telebot
 import os
@@ -11,6 +11,7 @@ bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
 DB_FILE = "db.json"
+MINIAPP_FOLDER = "miniapp"
 
 def load_db():
     try:
@@ -49,6 +50,14 @@ def check(user_id):
 @app.route("/")
 def home():
     return "Server is running"
+
+@app.route("/miniapp")
+def miniapp():
+    return send_from_directory(MINIAPP_FOLDER, "index.html")
+
+@app.route("/miniapp/<path:filename>")
+def miniapp_files(filename):
+    return send_from_directory(MINIAPP_FOLDER, filename)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
