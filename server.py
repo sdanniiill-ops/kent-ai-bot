@@ -3,8 +3,8 @@ from flask import Flask, request, jsonify
 import json
 import telebot
 
-TOKEN = "PASTE_BOT_TOKEN"
-GROUP_ID = -1000000000000
+TOKEN = "8390334757:AAGZ0iTQMW90-eZLvsQsYheB_mtEoimeq3w"
+GROUP_ID = -1003810263177
 
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
@@ -29,9 +29,13 @@ def postback():
 
     db = load_db()
 
-    if status == "deposit":
-        db[user_id] = "approved"
-        bot.send_message(GROUP_ID, f"💰 {user_id} сделал депозит")
+    if status == "lead":
+    db[user_id] = "registered"
+    bot.send_message(GROUP_ID, f"📝 {user_id} зарегистрировался")
+
+elif status == "deposit":
+    db[user_id] = "approved"
+    bot.send_message(GROUP_ID, f"💰 {user_id} сделал депозит")
 
     save_db(db)
     return "OK"
