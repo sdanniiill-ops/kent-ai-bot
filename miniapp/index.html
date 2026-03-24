@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>KENT AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="banner">🤖 KENT 89% AI</div>
+
+<div class="card">
+    <h3>📊 Выбор пары</h3>
+    <select id="pair">
+        <option>EUR/USD</option>
+        <option>USD/CAD</option>
+        <option>GBP/USD</option>
+    </select>
+</div>
+
+<div class="card">
+    <h3>⏱ Время сделки</h3>
+    <select id="time">
+        <option>1 мин</option>
+        <option>3 мин</option>
+        <option>5 мин</option>
+        <option>10 мин</option>
+    </select>
+</div>
+
+<button onclick="getSignal()">🚀 Получить сигнал</button>
+
+<div id="signal" class="signal"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

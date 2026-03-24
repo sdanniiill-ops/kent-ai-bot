@@ -1,0 +1,41 @@
+body {
+  background: linear-gradient(135deg, #0a0f2c, #1a1f4c);
+  color: white;
+  text-align: center;
+  font-family: Arial;
+}
+
+.banner {
+  font-size: 32px;
+  margin: 20px;
+  font-weight: bold;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  margin: 15px;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+select {
+  padding: 10px;
+  width: 80%;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  padding: 15px;
+  margin: 20px;
+  background: #2b6cff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.signal {
+  margin-top: 20px;
+  font-size: 18px;
+}
