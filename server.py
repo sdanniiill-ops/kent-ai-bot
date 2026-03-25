@@ -5,7 +5,7 @@ import telebot
 import os
 from datetime import datetime
 
-TOKEN = "ТВОЙ_ТОКЕН"
+TOKEN = "8390334757:AAGZ0iTQMW90-eZLvsQsYheB_mtEoimeq3w"
 
 # Канал/группа для логов
 LOG_CHANNEL_ID = -1003718026703
