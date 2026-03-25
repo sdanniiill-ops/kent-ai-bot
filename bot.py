@@ -3,10 +3,14 @@ import telebot
 import requests
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
-TOKEN = "8390334757:AAGZ0iTQMW90-eZLvsQsYheB_mtEoimeq3w"
+TOKEN = "ТВОЙ_ТОКЕН"
 DOMAIN = "https://kent-ai-bot.onrender.com"
 
-# Твоя ссылка регистрации
+# Канал, на который человек должен быть подписан
+REQUIRED_CHANNEL = "-1003810263177"   # если публичный
+# ЛИБО можно указать ID канала:
+# REQUIRED_CHANNEL = -1001111111111
+
 REGISTER_URL = (
     "https://u3.shortink.io/register"
     "?utm_campaign=840644"
@@ -19,18 +23,41 @@ REGISTER_URL = (
 
 bot = telebot.TeleBot(TOKEN)
 
+def is_subscribed(user_id):
+    try:
+        member = bot.get_chat_member(REQUIRED_CHANNEL, user_id)
+        return member.status in ["member", "administrator", "creator"]
+    except Exception:
+        return False
+
 @bot.message_handler(commands=['start'])
 def start(message):
+    if not is_subscribed(message.chat.id):
+        markup = InlineKeyboardMarkup()
+        markup.add(InlineKeyboardButton("📢 Подписаться", url="https://t.me/+jUfPvsXK3vUxZjMy"))
+        markup.add(InlineKeyboardButton("✅ Я подписался", callback_data="check_sub"))
+        bot.send_message(
+            message.chat.id,
+            """❌ Для доступа к боту сначала подпишись на основной канал.
+
+После подписки нажми кнопку "Я подписался".""",
+            reply_markup=markup
+        )
+        return
+
+    show_main_menu(message.chat.id)
+
+def show_main_menu(chat_id):
     markup = InlineKeyboardMarkup()
 
     markup.add(InlineKeyboardButton(
         "🚀 Регистрация",
-        url=f"{REGISTER_URL}&subid={message.chat.id}"
+        url=f"{REGISTER_URL}&sub_id1={chat_id}"
     ))
 
     markup.add(InlineKeyboardButton(
         "✅ Проверить доступ",
-        callback_data="check"
+        callback_data="check_access"
     ))
 
     markup.add(InlineKeyboardButton(
@@ -39,14 +66,15 @@ def start(message):
     ))
 
     bot.send_message(
-        message.chat.id,
+        chat_id,
         """🤖 AI BOT 89%
 
 📊 Умные сигналы на основе AI
 
-1. Зарегистрируйся
-2. Сделай депозит
-3. Нажми "Проверить доступ"
+1. Подпишись на основной канал
+2. Зарегистрируйся
+3. Сделай депозит
+4. Нажми "Проверить доступ"
 """,
         reply_markup=markup
     )
@@ -55,7 +83,14 @@ def start(message):
 def callback(call):
     user_id = str(call.message.chat.id)
 
-    if call.data == "check":
+    if call.data == "check_sub":
+        if is_subscribed(call.message.chat.id):
+            bot.send_message(call.message.chat.id, "✅ Подписка подтверждена")
+            show_main_menu(call.message.chat.id)
+        else:
+            bot.send_message(call.message.chat.id, "❌ Подписка не найдена")
+
+    elif call.data == "check_access":
         r = requests.get(f"{DOMAIN}/check/{user_id}", timeout=10).json()
 
         if r["status"] == "approved":
@@ -66,6 +101,10 @@ def callback(call):
             bot.send_message(call.message.chat.id, "❌ Нет доступа")
 
     elif call.data == "open_signals":
+        if not is_subscribed(call.message.chat.id):
+            bot.send_message(call.message.chat.id, "❌ Сначала подпишись на основной канал")
+            return
+
         r = requests.get(f"{DOMAIN}/check/{user_id}", timeout=10).json()
 
         if r["status"] == "approved":
