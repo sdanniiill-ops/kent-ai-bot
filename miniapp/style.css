@@ -1,41 +1,122 @@
 body {
-  background: linear-gradient(135deg, #0a0f2c, #1a1f4c);
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg, #07142a, #081d45);
   color: white;
-  text-align: center;
-  font-family: Arial;
 }
 
-.banner {
-  font-size: 32px;
-  margin: 20px;
+.app {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 20px 14px 30px;
+}
+
+.top-banner {
+  background: linear-gradient(135deg, #0d2f6d, #153b90);
+  border-radius: 20px;
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  margin-bottom: 18px;
+}
+
+.title {
+  font-size: 34px;
   font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.title span {
+  color: #59a7ff;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #d7e6ff;
+  font-size: 14px;
 }
 
 .card {
-  background: rgba(255,255,255,0.05);
-  margin: 15px;
-  padding: 15px;
-  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  margin-bottom: 14px;
+}
+
+.label {
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 
 select {
-  padding: 10px;
-  width: 80%;
-  border-radius: 8px;
-  border: none;
-}
-
-button {
-  padding: 15px;
-  margin: 20px;
-  background: #2b6cff;
-  color: white;
-  border: none;
+  width: 100%;
+  padding: 12px;
   border-radius: 12px;
+  border: none;
   font-size: 16px;
+  background: #0d2147;
+  color: white;
 }
 
-.signal {
-  margin-top: 20px;
+.signal-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 16px;
+  background: linear-gradient(135deg, #2b6cff, #4c8fff);
+  border: none;
+  border-radius: 16px;
+  color: white;
   font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(43,108,255,0.35);
+}
+
+.rules-box {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #cfe2ff;
+  line-height: 1.7;
+  text-align: left;
+  background: rgba(255,255,255,0.05);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.rules-box a {
+  color: #59a7ff;
+  text-decoration: none;
+}
+
+.signal-box {
+  margin-top: 18px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 18px;
+  padding: 18px;
+  min-height: 110px;
+  white-space: pre-line;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.history {
+  margin-top: 18px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.history-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.history-item {
+  background: rgba(255,255,255,0.05);
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
