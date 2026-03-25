@@ -3,7 +3,7 @@ import telebot
 import requests
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
-TOKEN = "ТВОЙ_ТОКЕН"
+TOKEN = "8390334757:AAGZ0iTQMW90-eZLvsQsYheB_mtEoimeq3w"
 DOMAIN = "https://kent-ai-bot.onrender.com"
 
 # Канал, на который человек должен быть подписан
