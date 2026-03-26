@@ -129,6 +129,44 @@ def postback():
         return "OK"
 
     return "Unknown status", 400
+    @app.route("/history/<user_id>", methods=["GET"])
+def get_history(user_id):
+    db = load_db()
+    user = db.get(user_id, {})
+    history = user.get("history", [])
+    return jsonify(history)
+
+@app.route("/save_signal", methods=["POST"])
+def save_signal():
+    data = request.get_json()
+
+    user_id = str(data.get("user_id"))
+    pair = data.get("pair")
+    time = data.get("time")
+    direction = data.get("direction")
+
+    if not user_id:
+        return jsonify({"error": "Missing user_id"}), 400
+
+    db = load_db()
+    user = db.get(user_id, {})
+
+    if "history" not in user:
+        user["history"] = []
+
+    user["history"].insert(0, {
+        "pair": pair,
+        "time": time,
+        "direction": direction,
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    })
+
+    user["history"] = user["history"][:30]
+
+    db[user_id] = user
+    save_db(db)
+
+    return jsonify({"ok": True})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
