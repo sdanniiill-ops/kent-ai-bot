@@ -5,10 +5,8 @@ import telebot
 import os
 from datetime import datetime
 
-TOKEN = "8390334757:AAGZ0iTQMW90-eZLvsQsYheB_mtEoimeq3w"
-
-# Канал/группа для логов
-LOG_CHANNEL_ID = -1003718026703
+TOKEN = "ТВОЙ_ТОКЕН"
+LOG_CHANNEL_ID = -1003718026703   # сюда ID лог-канала
 
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
@@ -103,7 +101,25 @@ def postback():
 
         bot.send_message(
             LOG_CHANNEL_ID,
-            f"💰 Новое пополнение\n\n"
+            f"💰 Первый депозит\n\n"
+            f"Telegram ID: {user_id}\n"
+            f"Trader ID: {trader_id}\n"
+            f"Сумма: {amount}$\n"
+            f"Страна: {country}\n"
+            f"Время: {event_time or now_str}\n\n"
+            f"✅ Доступ открыт"
+        )
+        return "OK"
+
+    elif status == "sundep":
+        user["trader_id"] = trader_id
+        user["country"] = country
+        db[user_id] = user
+        save_db(db)
+
+        bot.send_message(
+            LOG_CHANNEL_ID,
+            f"🔁 Повторный депозит\n\n"
             f"Telegram ID: {user_id}\n"
             f"Trader ID: {trader_id}\n"
             f"Сумма: {amount}$\n"
