@@ -52,7 +52,7 @@ def show_main_menu(chat_id):
 
     markup.add(InlineKeyboardButton(
         "🚀 Регистрация",
-        url=f"{REGISTER_URL}&sub_id1={chat_id}"
+        url=f"https://u3.shortink.io/register?utm_campaign=840644&utm_source=affiliate&utm_medium=sr&a=gaQWS5fftwSPOE&ac=89kent&code=WELCOME50&sub_id1={chat_id}"
     ))
 
     markup.add(InlineKeyboardButton(
