@@ -5,11 +5,9 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 TOKEN = "8390334757:AAGZ0iTQMW90-eZLvsQsYheB_mtEoimeq3w"
 DOMAIN = "https://kent-ai-bot.onrender.com"
+REQUIRED_CHANNEL = -1003810263177
 
-# Канал, на который человек должен быть подписан
-REQUIRED_CHANNEL = "-1003810263177"   # если публичный
-# ЛИБО можно указать ID канала:
-# REQUIRED_CHANNEL = -1001111111111
+bot = telebot.TeleBot(TOKEN)
 
 REGISTER_URL = (
     "https://u3.shortink.io/register"
@@ -20,8 +18,6 @@ REGISTER_URL = (
     "&ac=89kent"
     "&code=WELCOME50"
 )
-
-bot = telebot.TeleBot(TOKEN)
 
 def is_subscribed(user_id):
     try:
@@ -34,13 +30,17 @@ def is_subscribed(user_id):
 def start(message):
     if not is_subscribed(message.chat.id):
         markup = InlineKeyboardMarkup()
-        markup.add(InlineKeyboardButton("📢 Подписаться", url="https://t.me/+jUfPvsXK3vUxZjMy"))
-        markup.add(InlineKeyboardButton("✅ Я подписался", callback_data="check_sub"))
+        markup.add(InlineKeyboardButton(
+            "📢 Подписаться",
+            url="https://t.me/+jUfPvsXK3vUxZjMy"
+        ))
+        markup.add(InlineKeyboardButton(
+            "✅ Я подписался",
+            callback_data="check_sub"
+        ))
         bot.send_message(
             message.chat.id,
-            """❌ Для доступа к боту сначала подпишись на основной канал.
-
-После подписки нажми кнопку "Я подписался".""",
+            "❌ Для доступа к боту сначала подпишись на основной канал.\n\nПосле подписки нажми кнопку \"Я подписался\".",
             reply_markup=markup
         )
         return

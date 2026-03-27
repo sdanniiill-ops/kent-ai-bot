@@ -1,13 +1,1 @@
-{
-  "123456789": {
-    "status": "approved",
-    "history": [
-      {
-        "pair": "EUR/USD",
-        "time": "1 мин",
-        "direction": "📈 Вверх ⬆️",
-        "created_at": "2026-03-26 12:00:00"
-      }
-    ]
-  }
-}
+{}

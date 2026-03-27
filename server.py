@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 
 TOKEN = "8390334757:AAGZ0iTQMW90-eZLvsQsYheB_mtEoimeq3w"
-LOG_CHANNEL_ID = -1003718026703   # сюда ID лог-канала
+LOG_CHANNEL_ID = -1003718026703
 
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
@@ -18,7 +18,7 @@ def load_db():
     try:
         with open(DB_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
-    except:
+    except Exception:
         return {}
 
 def save_db(db):
@@ -63,7 +63,7 @@ def postback():
 
     try:
         amount = float(str(amount_raw).replace(",", "."))
-    except:
+    except Exception:
         amount = 0.0
 
     if not user_id:
@@ -82,11 +82,7 @@ def postback():
 
         bot.send_message(
             LOG_CHANNEL_ID,
-            f"📝 Новая регистрация\n\n"
-            f"Telegram ID: {user_id}\n"
-            f"Trader ID: {trader_id}\n"
-            f"Страна: {country}\n"
-            f"Время: {event_time or now_str}"
+            f"📝 Новая регистрация\n\nTelegram ID: {user_id}\nTrader ID: {trader_id}\nСтрана: {country}\nВремя: {event_time or now_str}"
         )
         return "OK"
 
@@ -101,13 +97,7 @@ def postback():
 
         bot.send_message(
             LOG_CHANNEL_ID,
-            f"💰 Первый депозит\n\n"
-            f"Telegram ID: {user_id}\n"
-            f"Trader ID: {trader_id}\n"
-            f"Сумма: {amount}$\n"
-            f"Страна: {country}\n"
-            f"Время: {event_time or now_str}\n\n"
-            f"✅ Доступ открыт"
+            f"💰 Первый депозит\n\nTelegram ID: {user_id}\nTrader ID: {trader_id}\nСумма: {amount}$\nСтрана: {country}\nВремя: {event_time or now_str}\n\n✅ Доступ открыт"
         )
         return "OK"
 
@@ -119,17 +109,13 @@ def postback():
 
         bot.send_message(
             LOG_CHANNEL_ID,
-            f"🔁 Повторный депозит\n\n"
-            f"Telegram ID: {user_id}\n"
-            f"Trader ID: {trader_id}\n"
-            f"Сумма: {amount}$\n"
-            f"Страна: {country}\n"
-            f"Время: {event_time or now_str}"
+            f"🔁 Повторный депозит\n\nTelegram ID: {user_id}\nTrader ID: {trader_id}\nСумма: {amount}$\nСтрана: {country}\nВремя: {event_time or now_str}"
         )
         return "OK"
 
     return "Unknown status", 400
-    @app.route("/history/<user_id>", methods=["GET"])
+
+@app.route("/history/<user_id>", methods=["GET"])
 def get_history(user_id):
     db = load_db()
     user = db.get(user_id, {})
@@ -142,7 +128,7 @@ def save_signal():
 
     user_id = str(data.get("user_id"))
     pair = data.get("pair")
-    time = data.get("time")
+    timeframe = data.get("time")
     direction = data.get("direction")
 
     if not user_id:
@@ -156,7 +142,7 @@ def save_signal():
 
     user["history"].insert(0, {
         "pair": pair,
-        "time": time,
+        "time": timeframe,
         "direction": direction,
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     })
