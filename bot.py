@@ -101,6 +101,8 @@ def callback(call):
             bot.send_message(call.message.chat.id, "✅ Доступ открыт")
         elif r["status"] == "registered":
             bot.send_message(call.message.chat.id, "📝 Регистрация найдена, депозит ещё не найден")
+            elif call.data == "enter_id":
+    bot.send_message(call.message.chat.id, "🆔 Отправь свой Trader ID")
         else:
             bot.send_message(call.message.chat.id, "❌ Нет доступа")
 
