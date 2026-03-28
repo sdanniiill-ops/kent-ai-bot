@@ -50,6 +50,22 @@ def check(user_id):
         "country": user.get("country")
     })
 
+@app.route("/check_id/<trader_id>")
+def check_id(trader_id):
+    db = load_db()
+
+    for user_id, user in db.items():
+        if str(user.get("trader_id", "")).strip() == str(trader_id).strip():
+            return jsonify({
+                "status": user.get("status", "none"),
+                "telegram_id": user_id,
+                "trader_id": user.get("trader_id"),
+                "deposit_amount": user.get("deposit_amount"),
+                "deposit_at": user.get("deposit_at")
+            })
+
+    return jsonify({"status": "none"})
+
 @app.route("/postback")
 def postback():
     user_id = request.args.get("subid")
