@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import telebot
 import requests
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
@@ -54,7 +55,8 @@ def show_main_menu(chat_id):
         "🚀 Регистрация",
         url=f"https://u3.shortink.io/register?utm_campaign=840644&utm_source=affiliate&utm_medium=sr&a=gaQWS5fftwSPOE&ac=89kent&code=WELCOME50&sub_id1={chat_id}"
     ))
-     markup.add(InlineKeyboardButton(
+
+    markup.add(InlineKeyboardButton(
         "🆔 Ввести ID",
         callback_data="enter_id"
     ))
@@ -101,10 +103,11 @@ def callback(call):
             bot.send_message(call.message.chat.id, "✅ Доступ открыт")
         elif r["status"] == "registered":
             bot.send_message(call.message.chat.id, "📝 Регистрация найдена, депозит ещё не найден")
-            elif call.data == "enter_id":
-    bot.send_message(call.message.chat.id, "🆔 Отправь свой Trader ID")
         else:
             bot.send_message(call.message.chat.id, "❌ Нет доступа")
+
+    elif call.data == "enter_id":
+        bot.send_message(call.message.chat.id, "🆔 Отправь свой Trader ID")
 
     elif call.data == "open_signals":
         if not is_subscribed(call.message.chat.id):
@@ -122,5 +125,17 @@ def callback(call):
             bot.send_message(call.message.chat.id, "✅ Доступ к сигналам открыт", reply_markup=markup)
         else:
             bot.send_message(call.message.chat.id, "❌ Сначала регистрация и депозит")
+
+@bot.message_handler(func=lambda message: True)
+def handle_id(message):
+    user_input = message.text.strip()
+
+    if user_input.isdigit():
+        r = requests.get(f"{DOMAIN}/check_id/{user_input}", timeout=10).json()
+
+        if r["status"] == "approved":
+            bot.send_message(message.chat.id, "✅ Доступ открыт")
+        else:
+            bot.send_message(message.chat.id, "❌ ID не найден или нет депозита")
 
 bot.infinity_polling()
