@@ -16,7 +16,11 @@ function getSignal() {
         return;
     }
 
-    document.getElementById("signal").innerText = "⏳ Поиск сигнала...";
+    document.getElementById("signal").innerHTML = `
+<div class="loader">
+  <span class="glass">🔍</span>
+  <span>Поиск сигнала...</span>
+</div>`;
 
     setTimeout(() => {
         const pair = document.getElementById("pair").value;
