@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KENT 89% AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <div class="top-banner">
+      <div class="title">KENT <span>89%</span> AI</div>
+      <div class="subtitle">AI signals</div>
+    </div>
+
+    <div class="card">
+      <div class="label">📊 Выбор пары</div>
+      <select id="pair">
+        <option>EUR/USD</option>
+        <option>USD/CAD</option>
+        <option>GBP/USD</option>
+        <option>EUR/JPY</option>
+        <option>USD/JPY</option>
+        <option>AUD/USD</option>
+        <option>USD/CHF</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="label">⏱ Время сделки</div>
+      <select id="time">
+        <option>1 мин</option>
+        <option>3 мин</option>
+        <option>5 мин</option>
+        <option>10 мин</option>
+      </select>
+    </div>
+
+    <button class="signal-btn" onclick="getSignal()">🚀 Получить сигнал</button>
+
+    <div class="rules-box">
+      ⚠️ Вход не более 1% от баланса<br>
+      🔁 При убытке догон ×2<br>
+      📩 Поддержка: <a href="https://t.me/Ke89nt" target="_blank">@Ke89nt</a>
+    </div>
+
+    <div id="signal" class="signal-box">Сигнал пока не получен</div>
+
+    <div class="history">
+      <div class="history-title">📜 История сделок</div>
+      <div id="history-list"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
