@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 import telebot
 import requests
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
@@ -27,61 +26,39 @@ def is_subscribed(user_id):
     except Exception:
         return False
 
+def send_signal_button(chat_id):
+    markup = InlineKeyboardMarkup()
+    markup.add(InlineKeyboardButton(
+        "📊 Открыть сигналы",
+        web_app=WebAppInfo(url=f"{DOMAIN}/miniapp?user_id={chat_id}")
+    ))
+    bot.send_message(chat_id, "✅ Депозит найден. Доступ к сигналам открыт.", reply_markup=markup)
+
 @bot.message_handler(commands=['start'])
 def start(message):
     if not is_subscribed(message.chat.id):
         markup = InlineKeyboardMarkup()
-        markup.add(InlineKeyboardButton(
-            "📢 Подписаться",
-            url="https://t.me/+jUfPvsXK3vUxZjMy"
-        ))
-        markup.add(InlineKeyboardButton(
-            "✅ Я подписался",
-            callback_data="check_sub"
-        ))
+        markup.add(InlineKeyboardButton("📢 Подписаться", url="https://t.me/+jUfPvsXK3vUxZjMy"))
+        markup.add(InlineKeyboardButton("✅ Я подписался", callback_data="check_sub"))
         bot.send_message(
             message.chat.id,
-            "❌ Для доступа к боту сначала подпишись на основной канал.\n\nПосле подписки нажми кнопку \"Я подписался\".",
+            "❌ Для доступа к боту сначала подпишись на основной канал.\n\nПосле подписки нажми кнопку «Я подписался».",
             reply_markup=markup
         )
         return
-
     show_main_menu(message.chat.id)
 
 def show_main_menu(chat_id):
     markup = InlineKeyboardMarkup()
-
     markup.add(InlineKeyboardButton(
         "🚀 Регистрация",
-        url=f"https://u3.shortink.io/register?utm_campaign=840644&utm_source=affiliate&utm_medium=sr&a=gaQWS5fftwSPOE&ac=89kent&code=WELCOME50&sub_id1={chat_id}"
+        url=f"{REGISTER_URL}&sub_id1={chat_id}"
     ))
-
-    markup.add(InlineKeyboardButton(
-        "🆔 Ввести ID",
-        callback_data="enter_id"
-    ))
-
-    markup.add(InlineKeyboardButton(
-        "✅ Проверить доступ",
-        callback_data="check_access"
-    ))
-
-    markup.add(InlineKeyboardButton(
-        "📊 Открыть сигналы",
-        callback_data="open_signals"
-    ))
-
+    markup.add(InlineKeyboardButton("🆔 Ввести ID", callback_data="enter_id"))
+    markup.add(InlineKeyboardButton("🔐 Проверить доступ", callback_data="check_access"))
     bot.send_message(
         chat_id,
-        """🤖 AI BOT 89%
-
-📊 Умные сигналы на основе AI
-
-1. Подпишись на основной канал
-2. Зарегистрируйся
-3. Сделай депозит
-4. Нажми "Проверить доступ"
-""",
+        "💎 KENT AI | Сигналы\n\n1. Подпишись на канал\n2. Зарегистрируйся\n3. Сделай депозит\n4. Отправь Trader ID\n5. Получи доступ к mini app",
         reply_markup=markup
     )
 
@@ -96,46 +73,31 @@ def callback(call):
         else:
             bot.send_message(call.message.chat.id, "❌ Подписка не найдена")
 
+    elif call.data == "enter_id":
+        bot.send_message(call.message.chat.id, "🆔 Отправь свой Trader ID одним сообщением")
+
     elif call.data == "check_access":
         r = requests.get(f"{DOMAIN}/check/{user_id}", timeout=10).json()
-
-        if r["status"] == "approved":
-            bot.send_message(call.message.chat.id, "✅ Доступ открыт")
-        elif r["status"] == "registered":
-            bot.send_message(call.message.chat.id, "📝 Регистрация найдена, депозит ещё не найден")
+        if r.get("status") == "approved":
+            send_signal_button(call.message.chat.id)
+        elif r.get("status") == "registered":
+            bot.send_message(call.message.chat.id, "📝 Регистрация найдена, но депозит ещё не найден")
         else:
-            bot.send_message(call.message.chat.id, "❌ Нет доступа")
-
-    elif call.data == "enter_id":
-        bot.send_message(call.message.chat.id, "🆔 Отправь свой Trader ID")
-
-    elif call.data == "open_signals":
-        if not is_subscribed(call.message.chat.id):
-            bot.send_message(call.message.chat.id, "❌ Сначала подпишись на основной канал")
-            return
-
-        r = requests.get(f"{DOMAIN}/check/{user_id}", timeout=10).json()
-
-        if r["status"] == "approved":
-            markup = InlineKeyboardMarkup()
-            markup.add(InlineKeyboardButton(
-                "📊 Открыть Mini App",
-                web_app=WebAppInfo(url=f"{DOMAIN}/miniapp?user_id={user_id}")
-            ))
-            bot.send_message(call.message.chat.id, "✅ Доступ к сигналам открыт", reply_markup=markup)
-        else:
-            bot.send_message(call.message.chat.id, "❌ Сначала регистрация и депозит")
+            bot.send_message(call.message.chat.id, "❌ Нет доступа. Сначала регистрация, депозит и проверка ID")
 
 @bot.message_handler(func=lambda message: True)
-def handle_id(message):
-    user_input = message.text.strip()
-
-    if user_input.isdigit():
-        r = requests.get(f"{DOMAIN}/check_id/{user_input}", timeout=10).json()
-
-        if r["status"] == "approved":
-            bot.send_message(message.chat.id, "✅ Доступ открыт")
-        else:
-            bot.send_message(message.chat.id, "❌ ID не найден или нет депозита")
+def handle_text(message):
+    text = (message.text or "").strip()
+    if not text.isdigit():
+        return
+    r = requests.get(f"{DOMAIN}/check_id/{text}", timeout=10).json()
+    status = r.get("status")
+    if status == "approved":
+        bot.send_message(message.chat.id, "✅ ID найден, депозит подтверждён")
+        send_signal_button(message.chat.id)
+    elif status == "registered":
+        bot.send_message(message.chat.id, "📝 ID найден, но депозит ещё не найден")
+    else:
+        bot.send_message(message.chat.id, "❌ ID не найден или депозит отсутствует")
 
 bot.infinity_polling()

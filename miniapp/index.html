@@ -2,53 +2,105 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>KENT 89% AI</title>
   <link rel="stylesheet" href="/miniapp/style.css">
 </head>
 <body>
-  <div class="app">
-    <div class="top-banner">
-      <div class="title">KENT <span>89%</span> AI</div>
-      <div class="subtitle">AI signals</div>
+  <div class="app-shell">
+    <div class="hero">
+      <div class="brand">KENT <span>89%</span> AI</div>
+      <div class="hero-subtitle">Мини-приложение сигналов</div>
     </div>
 
-    <div class="card">
-      <div class="label">📊 Выбор пары</div>
-      <select id="pair">
-        <option>EUR/USD</option>
-        <option>USD/CAD</option>
-        <option>GBP/USD</option>
-        <option>EUR/JPY</option>
-        <option>USD/JPY</option>
-        <option>AUD/USD</option>
-        <option>USD/CHF</option>
-      </select>
+    <div id="closedCard" class="closed-card hidden">
+      <div class="closed-title">Рынок закрыт</div>
+      <div class="closed-text">
+        Сигналы доступны с понедельника по пятницу<br>
+        с 08:00 до 22:00
+      </div>
     </div>
 
-    <div class="card">
-      <div class="label">⏱ Время сделки</div>
-      <select id="time">
-        <option>1 мин</option>
-        <option>3 мин</option>
-        <option>5 мин</option>
-        <option>10 мин</option>
-      </select>
+    <div id="mainMenu">
+      <div class="grid-row">
+        <div class="card">
+          <div class="label">Тип рынка</div>
+          <select id="marketType"></select>
+        </div>
+        <div class="card">
+          <div class="label">Таймфрейм</div>
+          <select id="timeframe"></select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="label">Валютная пара</div>
+        <select id="pair"></select>
+      </div>
+
+      <button id="getSignalBtn" class="primary-btn">Получить сигнал</button>
+
+      <div class="rules-box">
+        ⚠️ Вход не более 1% от баланса<br>
+        🔁 При убытке догон ×2<br>
+        📩 Поддержка: <a href="https://t.me/Ke89nt" target="_blank">@Ke89nt</a>
+      </div>
+
+      <div class="history card">
+        <div class="history-title">История сигналов</div>
+        <div id="historyList" class="history-list"></div>
+      </div>
     </div>
 
-    <button class="signal-btn" onclick="getSignal()">🚀 Получить сигнал</button>
-
-    <div class="rules-box">
-      ⚠️ Вход не более 1% от баланса<br>
-      🔁 При убытке догон ×2<br>
-      📩 Поддержка: <a href="https://t.me/Ke89nt" target="_blank">@Ke89nt</a>
+    <div id="searchScreen" class="search-screen hidden">
+      <div class="overlay-card">
+        <div class="robot-wrap">
+          <div class="robot">🤖</div>
+          <div class="magnifier">🔎</div>
+        </div>
+        <div class="search-text">Поиск сигнала...</div>
+      </div>
     </div>
 
-    <div id="signal" class="signal-box">Сигнал пока не получен</div>
+    <div id="signalScreen" class="hidden">
+      <div class="signal-card">
+        <div class="signal-title">Сигнал</div>
 
-    <div class="history">
-      <div class="history-title">📜 История сделок</div>
-      <div id="history-list"></div>
+        <div class="signal-info large">
+          <div class="small-label">Валютная пара</div>
+          <div id="resultPair" class="big-value">EUR/USD</div>
+        </div>
+
+        <div class="grid-row">
+          <div class="signal-info">
+            <div class="small-label">Таймфрейм</div>
+            <div id="resultTime" class="mid-value">1 мин</div>
+          </div>
+          <div class="signal-info">
+            <div class="small-label">Рынок</div>
+            <div id="resultMarket" class="mid-value">Forex</div>
+          </div>
+        </div>
+
+        <div class="signal-info">
+          <div class="small-label">Направление</div>
+          <div id="resultDirection" class="direction-value">Вверх</div>
+        </div>
+
+        <div class="signal-info">
+          <div class="small-label">До завершения</div>
+          <div class="progress-wrap">
+            <div class="progress-bar">
+              <div id="progressLine" class="progress-line"></div>
+            </div>
+            <div id="countdownText" class="countdown-text">00:00</div>
+          </div>
+        </div>
+
+        <div id="resultBadge" class="result-badge pending">В работе</div>
+      </div>
+
+      <button id="resetBtn" class="secondary-btn">Скинуть сигнал</button>
     </div>
   </div>
 
