@@ -15,10 +15,7 @@
 
     <div id="closedCard" class="closed-card hidden">
       <div class="closed-title">Рынок закрыт</div>
-      <div class="closed-text">
-        Сигналы доступны с понедельника по пятницу<br>
-        с 08:00 до 22:00
-      </div>
+      <div class="closed-text">Сигналы доступны с понедельника по пятницу<br>с 08:00 до 22:00</div>
     </div>
 
     <div id="mainMenu">
@@ -38,11 +35,24 @@
         <select id="pair"></select>
       </div>
 
-      <button id="getSignalBtn" class="primary-btn">Получить сигнал</button>
+      <div class="btn-row">
+        <button id="analyzeBtn" class="secondary-btn">Анализ</button>
+        <button id="getSignalBtn" class="primary-btn">Получить сигнал</button>
+      </div>
+
+      <div id="analysisLoader" class="analysis-loader hidden">
+        <div class="loader-bar"><div id="loaderFill" class="loader-fill"></div></div>
+        <div class="loader-text">Загрузка анализа...</div>
+      </div>
+
+      <div id="analysisCard" class="analysis-card hidden">
+        <div class="analysis-title">Анализ входа</div>
+        <div id="analysisContent" class="analysis-content"></div>
+      </div>
 
       <div class="rules-box">
         ⚠️ Вход не более 1% от баланса<br>
-        🔁 При убытке догон ×2<br>
+        🔁 При убытке перекрытие x2 только для Forex<br>
         📩 Поддержка: <a href="https://t.me/Ke89nt" target="_blank">@Ke89nt</a>
       </div>
 
@@ -88,16 +98,24 @@
         </div>
 
         <div class="signal-info">
+          <div class="small-label">Причина входа</div>
+          <div id="resultAnalysis" class="analysis-mini"></div>
+        </div>
+
+        <div class="signal-info">
           <div class="small-label">До завершения</div>
           <div class="progress-wrap">
-            <div class="progress-bar">
-              <div id="progressLine" class="progress-line"></div>
-            </div>
+            <div class="progress-bar"><div id="progressLine" class="progress-line"></div></div>
             <div id="countdownText" class="countdown-text">00:00</div>
           </div>
         </div>
 
         <div id="resultBadge" class="result-badge pending">В работе</div>
+      </div>
+
+      <div id="tvWrap" class="tv-wrap hidden">
+        <div class="tv-title">График</div>
+        <iframe id="tvFrame" class="tv-frame" src="" loading="lazy"></iframe>
       </div>
 
       <button id="resetBtn" class="secondary-btn">Скинуть сигнал</button>

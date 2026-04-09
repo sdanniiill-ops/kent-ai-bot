@@ -8,9 +8,8 @@ from datetime import datetime
 TOKEN = "8390334757:AAGZ0iTQMW90-eZLvsQsYheB_mtEoimeq3w"
 LOG_CHANNEL_ID = -1003718026703
 
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 app = Flask(__name__)
-
 DB_FILE = "db.json"
 MINIAPP_FOLDER = "miniapp"
 
@@ -40,7 +39,7 @@ def miniapp_files(filename):
 @app.route("/check/<user_id>")
 def check(user_id):
     db = load_db()
-    user = db.get(user_id, {})
+    user = db.get(str(user_id), {})
     return jsonify({
         "status": user.get("status", "none"),
         "registered_at": user.get("registered_at"),
@@ -50,21 +49,26 @@ def check(user_id):
         "country": user.get("country")
     })
 
-@app.route("/check_id/<trader_id>")
-def check_id(trader_id):
+@app.route("/bind_id", methods=["POST"])
+def bind_id():
+    data = request.get_json() or {}
+    telegram_id = str(data.get("telegram_id"))
+    trader_id = str(data.get("trader_id", "")).strip()
+    if not telegram_id or not trader_id:
+        return jsonify({"status": "none"})
     db = load_db()
-
+    found_user_id = None
+    found_user = None
     for user_id, user in db.items():
-        if str(user.get("trader_id", "")).strip() == str(trader_id).strip():
-            return jsonify({
-                "status": user.get("status", "none"),
-                "telegram_id": user_id,
-                "trader_id": user.get("trader_id"),
-                "deposit_amount": user.get("deposit_amount"),
-                "deposit_at": user.get("deposit_at")
-            })
-
-    return jsonify({"status": "none"})
+        if str(user.get("trader_id", "")).strip() == trader_id:
+            found_user_id = user_id
+            found_user = user
+            break
+    if not found_user:
+        return jsonify({"status": "none"})
+    if found_user_id != telegram_id:
+        return jsonify({"status": "blocked"})
+    return jsonify({"status": found_user.get("status", "none"), "telegram_id": found_user_id})
 
 @app.route("/postback")
 def postback():
@@ -74,100 +78,89 @@ def postback():
     country = request.args.get("country", "")
     event_time = request.args.get("time", "")
     amount_raw = request.args.get("amount", "0")
-
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     try:
         amount = float(str(amount_raw).replace(",", "."))
     except Exception:
         amount = 0.0
-
     if not user_id:
         return "Missing subid", 400
-
     db = load_db()
-    user = db.get(user_id, {})
-
+    user = db.get(str(user_id), {})
     if status == "lead":
         user["status"] = "registered"
         user["registered_at"] = event_time or now_str
         user["trader_id"] = trader_id
         user["country"] = country
-        db[user_id] = user
+        db[str(user_id)] = user
         save_db(db)
-
-        bot.send_message(
-            LOG_CHANNEL_ID,
-            f"📝 Новая регистрация\n\nTelegram ID: {user_id}\nTrader ID: {trader_id}\nСтрана: {country}\nВремя: {event_time or now_str}"
-        )
         return "OK"
-
     elif status == "deposit":
         user["status"] = "approved"
         user["deposit_amount"] = amount
         user["deposit_at"] = event_time or now_str
         user["trader_id"] = trader_id
         user["country"] = country
-        db[user_id] = user
+        db[str(user_id)] = user
         save_db(db)
-
-        bot.send_message(
-            LOG_CHANNEL_ID,
-            f"💰 Первый депозит\n\nTelegram ID: {user_id}\nTrader ID: {trader_id}\nСумма: {amount}$\nСтрана: {country}\nВремя: {event_time or now_str}\n\n✅ Доступ открыт"
-        )
         return "OK"
-
     elif status == "sundep":
         user["trader_id"] = trader_id
         user["country"] = country
-        db[user_id] = user
+        user["last_repeat_deposit"] = amount
+        db[str(user_id)] = user
         save_db(db)
-
-        bot.send_message(
-            LOG_CHANNEL_ID,
-            f"🔁 Повторный депозит\n\nTelegram ID: {user_id}\nTrader ID: {trader_id}\nСумма: {amount}$\nСтрана: {country}\nВремя: {event_time or now_str}"
-        )
         return "OK"
-
     return "Unknown status", 400
 
 @app.route("/history/<user_id>", methods=["GET"])
 def get_history(user_id):
     db = load_db()
-    user = db.get(user_id, {})
-    history = user.get("history", [])
-    return jsonify(history)
+    return jsonify(db.get(str(user_id), {}).get("history", []))
 
 @app.route("/save_signal", methods=["POST"])
 def save_signal():
-    data = request.get_json()
-
+    data = request.get_json() or {}
     user_id = str(data.get("user_id"))
-    pair = data.get("pair")
-    timeframe = data.get("time")
-    direction = data.get("direction")
-
     if not user_id:
         return jsonify({"error": "Missing user_id"}), 400
-
     db = load_db()
     user = db.get(user_id, {})
-
-    if "history" not in user:
-        user["history"] = []
-
-    user["history"].insert(0, {
-        "pair": pair,
-        "time": timeframe,
-        "direction": direction,
+    history = user.get("history", [])
+    signal_id = str(int(datetime.now().timestamp() * 1000))
+    history.insert(0, {
+        "id": signal_id,
+        "market": data.get("market"),
+        "pair": data.get("pair"),
+        "time": data.get("time"),
+        "direction": data.get("direction"),
+        "analysis": data.get("analysis"),
+        "result": "PENDING",
+        "expires_at": data.get("expires_at"),
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     })
-
-    user["history"] = user["history"][:30]
-
+    user["history"] = history[:100]
     db[user_id] = user
     save_db(db)
+    return jsonify({"ok": True, "signal_id": signal_id})
 
+@app.route("/update_result", methods=["POST"])
+def update_result():
+    data = request.get_json() or {}
+    user_id = str(data.get("user_id"))
+    signal_id = str(data.get("signal_id"))
+    result = data.get("result")
+    db = load_db()
+    user = db.get(user_id, {})
+    history = user.get("history", [])
+    for item in history:
+        if str(item.get("id")) == signal_id:
+            item["result"] = result
+            item["finished_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            break
+    user["history"] = history
+    db[user_id] = user
+    save_db(db)
     return jsonify({"ok": True})
 
 if __name__ == "__main__":
